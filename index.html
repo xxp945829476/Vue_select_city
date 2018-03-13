@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <title>select三级联动</title>
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <style type="text/css">
+    [v-cloak] {
+        display: none;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <!-- 选择省 -->
+        <select v-model="province" @change="provinceChange">
+            <option disabled value="">请选择</option>
+            <option v-for="(provinces,index) in addressList" :value="index">{{provinces.name}}</option>
+        </select>
+        <!-- 选择市 -->
+        <select v-model="city" @change="cityChange">
+            <option disabled value="">请选择</option>
+            <option v-for="(citysss,index) in getCity" :value="index">{{citysss.name}}</option>
+        </select>
+        <!-- 选择区 -->
+        <select v-model="area" @change="areaChange">
+            <option disabled value="">请选择</option>
+            <option v-for="(areas,index) in getArea" :value="index">{{areas}}</option>
+        </select>
+
+
+        <div>{{addressa}}</div>
+    </div>
+    <script type="text/javascript" src="js/citys.js"></script>
+    <script type="text/javascript" src="js/vue.js"></script>
+    <script type="text/javascript">
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            addressList: [], //城市列表
+            getCity: [], //重新生成新的市列表
+            getArea: [], //重新生成新的区列表
+            province: '', //选中的省份 
+            city: '', //选中的市
+            area: '', //选中的区
+            p:'',
+            c:'',
+            a:'',
+            address:''
+        },
+        mounted: function() {
+            var that = this;
+            that.addressList = rawCitiesData;
+        },
+        watch: {
+            province: function(val) {
+                console.log(val)
+                this.province = val
+            },
+            city: function(val) {
+                console.log(val)
+                this.city = val
+            }
+        },
+        computed: {
+            addressa:function(){
+                return this.address = this.p + '' + this.c + '' + this.a
+            }
+        },
+        methods: {
+            //选择省
+            provinceChange: function() {
+                this.getCity = [];
+                this.getArea = [];
+                this.city = 0;
+                this.getCity.push(this.addressList[this.province].city);
+                this.getCity = this.getCity[0];
+                this.cityChange();
+                this.p = this.addressList[this.province].name;
+                this.c = this.addressList[this.province].city[this.city].name;
+                this.a = this.addressList[this.province].city[this.city].area[this.area];
+                console.log(this.addressList[this.province].name)
+            },
+            //选择市
+            cityChange: function() {
+                this.getArea = [];
+                this.area = 0;
+                this.getArea.push(this.addressList[this.province].city[this.city].area);
+                console.log(this.getArea)
+                this.getArea = this.getArea[0];
+                this.c = this.addressList[this.province].city[this.city].name;
+                console.log(this.addressList[this.province].city[this.city].name)
+                console.log(this.addressList[this.province].city[this.city].area[this.area])
+            },
+            //选择县区
+            areaChange: function() {
+                this.a = this.addressList[this.province].city[this.city].area[this.area];
+            }
+        }
+    })
+    </script>
+</body>
+
+</html>
